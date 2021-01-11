@@ -12,35 +12,47 @@ io.on('connection', socket=>{
 });
 
 app.post('/api/signup', (req, res)=>{
-    const {user} = req.body;
-    console.log(user);
+    const user = req.body;
     const newUser = new User({
         fName: user.fName,
         lName: user.lName,
         email: user.email,
         password: user.password
+        
     });
     newUser.save((err)=>{
         if(err){
             res.send(err);
         }
         else{
-            res.send("Signed up");
+            data = {
+                id: newUser._id,
+                fName: newUser.fName,
+                lName: newUser.lName
+            };
+            res.send({message:"Signed up", user: data});
         }
-    })
+    });
 })
 app.post("/api/login", (req, res)=>{
-    const {user} = req.body;
-    User.findOne({email: user.email}, (foundUser, err)=>{
+    const user = req.body;
+    console.log(user.email);
+    User.findOne({email: user.email}, (err, foundUser)=>{
         if(err){
             res.send("wrong Email");
         }
         else{
             if(foundUser.password === user.password){
-                res.send("Logged in");
+                res.write("Logged in");
+                data = {
+                    id: foundUser._id,
+                    fName: foundUser.fName,
+                    lName: foundUser.lName
+                };
+                res.send({message:"Logged in", user: data});
             }
             else{
-                res.send("wrong Password");
+                res.send({message: "wrong Password"});
             }
         }
     })

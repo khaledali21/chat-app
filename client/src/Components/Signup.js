@@ -1,158 +1,72 @@
 import React, {useState} from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
+import {Redirect} from "react-router-dom";
+function Signup(props){
+    const [user, setUser] = useState({
+        fName: "",
+        lName: "",
+        email: "",
+        password: ""
+      });
+      function handleChange(e){
+        const {name, value} = e.target;
+        setUser({...user, [name]: value});
+      }
+    return(
+        <main className="form-signin">
+            <form onSubmit={(e)=>{props.onSubmit(e, user); setUser({
+              fName: "",
+              lName: "",
+              email: "",
+              password: ""
+            })}}>
+                <h1 className="h3 mb-3 fw-normal">Please sign in</h1> 
+                <input 
+                    type="text"
+                    className="form-control"
+                    name="fName"
+                    value={user.fName}
+                    onChange={(e)=>handleChange(e)}
+                    placeholder="First name"
+                    required autoFocus                    
+                />
+                <input 
+                    type="text"
+                    className="form-control"
+                    name="lName"
+                    value={user.lName}
+                    onChange={(e)=>handleChange(e)}
+                    placeholder="Last name"
+                    required                
+                />
+                <input 
+                    type="email"
+                    className="form-control"
+                    name="email"
+                    value={user.email}
+                    onChange={(e)=>handleChange(e)}
+                    placeholder="Email address"
+                    required                       
+                />
+                <input 
+                    type="password"
+                    className="form-control"
+                    name="password"
+                    value={user.password}
+                    onChange={(e)=>handleChange(e)}
+                    placeholder="Password"
+                    required      
+                />
+                <div className="checkbox mb-3">
+                    <label>
+                        <input type="checkbox" value="remember-me" /> Remember me
+                    </label>
+                </div>
+                <button className="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
+                <p className="mt-5 mb-3 text-muted">&copy; 2017-2020</p>
+            </form>
+            {props.loggedIn && <Redirect to="/"/>};
+            {props.wrongLogging && <p className="p">{props.message}</p>}
+        </main>
+    );
 }
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
-export default function SignUp(props) {
-  const classes = useStyles();
-
-  const [user, setUser] = useState({
-    fName: "",
-    lName: "",
-    email: "",
-    password: ""
-  });
-  function handleChange(e){
-    const {name, value} = e.target;
-    setUser({...user, [name]: value});
-  }
-
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign up
-        </Typography>
-        <form className={classes.form} onSubmit={(e)=>{props.onSubmit(e, user);setUser("");}} noValidate>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="fName"
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                value={user.fName}
-                onChange={(e)=>handleChange(e)}
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lName"
-                value={user.lName}
-                onChange={(e)=>handleChange(e)}
-                autoComplete="lname"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                value={user.email}
-                onChange={(e)=>handleChange(e)}
-                autoComplete="email"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                value={user.password}
-                onChange={(e)=>handleChange(e)}
-                autoComplete="current-password"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign Up
-          </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <Link href="/login" variant="body2">
-                Already have an account? Sign in
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
-    </Container>
-  );
-}
+export default Signup

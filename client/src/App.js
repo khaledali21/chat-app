@@ -2,46 +2,50 @@ import React, {useState} from "react"
 import Signup from "./Components/Signup";
 import Login from "./Components/Login";
 import Home from "./Components/Home"
+import Contacts from "./Components/Contacts"
 import axios from "axios"
 import {
   BrowserRouter as Router,
   Route,
-  Redirect,
 } from "react-router-dom";
 function App() {
   const [isLoggedIn, setLogin] = useState(false);
   const [wrongLogging, setWrongLogging] = useState(false);
   const [loggingMessage, setLoggingMessage] = useState("");
-
-  function handleSignup(e, user){
+  const [user, setUser] = useState({
+    id: "",
+    fName: "",
+    lName: "",
+  });
+  function handleSignup(e, newUser){
     e.preventDefault();
-    axios.post("/api/signup", {user})
+    axios.post("/api/signup", newUser)
     .then(res=>{
-      if(res.data === "Signed up")
+      if(res.data.message === "Signed up")
       {
+        setUser(res.data.user);
         setLogin(true);
-        <Redirect to="/"/>;
       }
     })
     .catch(err=>{
       console.log(err);
     })
   }
-  function handleSignin(e, user){
+  function handleSignin(e, newUser){
     e.preventDefault();
-    axios.post("/api/login", user)
+    axios.post("/api/login", newUser)
     .then(res=>{
-      if(res.data === "Logged in")
+      if(res.data.message === "Logged in")
       {
+        setUser(res.data.user);
         setLogin(true);
-        <Redirect to="/"/>;
       }
       else if(res.data === "wrong Email")
       {
         setLoggingMessage("The Email you entered is incorrect");
         setWrongLogging(true);
       }     
-      else if(res.data === "wrongPassword")
+      else if(res.data === "wrong Password")
       {
         setLoggingMessage("The Password you entered is incorrect");
         setWrongLogging(true);
@@ -58,10 +62,13 @@ function App() {
           <Home loggedIn={isLoggedIn}/>
         </Route>
         <Route exact path="/signup">
-        <Signup onSubmit={handleSignup}/>
+          <Signup onSubmit={handleSignup} wrongLogging={wrongLogging} message={loggingMessage} loggedIn={isLoggedIn}/>
         </Route>
         <Route exact path="/login">
-        <Login onSubmit={handleSignin} wrongLogging={wrongLogging} message={loggingMessage}/>
+          <Login onSubmit={handleSignin} wrongLogging={wrongLogging} message={loggingMessage} loggedIn={isLoggedIn}/>
+        </Route>
+        <Route exact path="/contacts">
+          <Contacts user={user}/>
         </Route>
       </Router>
     </div>
